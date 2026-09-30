@@ -1,0 +1,51 @@
+{
+    "feature_names": [
+        "Gender",
+        "Married",
+        "Dependents",
+        "Education",
+        "Self_Employed",
+        "ApplicantIncome",
+        "CoapplicantIncome",
+        "LoanAmount",
+        "Loan_Amount_Term",
+        "Credit_History",
+        "Property_Area"
+    ],
+    "encoder_mappings": {
+        "Gender": [
+            "Female",
+            "Male"
+        ],
+        "Married": [
+            "No",
+            "Yes"
+        ],
+        "Dependents": [
+            "0",
+            "1",
+            "2",
+            "3+"
+        ],
+        "Education": [
+            "Graduate",
+            "Not Graduate"
+        ],
+        "Self_Employed": [
+            "No",
+            "Yes"
+        ],
+        "Property_Area": [
+            "Rural",
+            "Semiurban",
+            "Urban"
+        ],
+        "Loan_Status": [
+            "N",
+            "Y"
+        ]
+    },
+    "best_k": 14,
+    "accuracy": 0.7967479674796748,
+    "best_cv_score": 0.8023912595341166
+}
