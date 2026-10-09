@@ -27,11 +27,11 @@ async def lifespan(app: FastAPI):
             knn_model = joblib.load(MODEL_PATH)
             scaler = joblib.load(SCALER_PATH)
             label_encoders = joblib.load(ENCODERS_PATH)
-            print(f"✅ Models loaded successfully from {MODEL_DIR}")
+            print(f"[OK] Models loaded successfully from {MODEL_DIR}")
         else:
-            print("⚠️  Model files not found. Run ml_pipeline/train_knn.py first.")
+            print("[WARN] Model files not found. Run ml_pipeline/train_knn.py first.")
     except Exception as e:
-        print(f"❌ Error loading models: {e}")
+        print(f"[ERROR] Error loading models: {e}")
     yield
 
 
