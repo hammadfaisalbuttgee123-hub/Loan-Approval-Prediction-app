@@ -44,7 +44,8 @@ export default function PredictPage() {
         Credit_History: Number(formData.Credit_History),
       };
 
-      const response = await fetch('http://localhost:8000/predict', {
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/+$/, '');
+      const response = await fetch(`${apiBase}/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +54,8 @@ export default function PredictPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch prediction');
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.detail || `Server responded with status ${response.status}`);
       }
 
       const data = await response.json();
@@ -73,9 +75,15 @@ export default function PredictPage() {
       predictions.unshift(newPrediction); // add to top
       localStorage.setItem('loanPredictions', JSON.stringify(predictions));
 
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      setError('Could not connect to the prediction server. Make sure the backend is running at http://localhost:8000.');
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/+$/, '');
+      const message = err instanceof Error ? err.message : String(err);
+      if (message.includes('Server responded') || message.includes('Invalid value')) {
+        setError(`Backend error: ${message}`);
+      } else {
+        setError(`Could not connect to the prediction server (${apiBase}). Please make sure your backend is running and that NEXT_PUBLIC_API_URL is configured.`);
+      }
     } finally {
       setLoading(false);
     }

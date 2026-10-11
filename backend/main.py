@@ -7,7 +7,21 @@ import numpy as np
 import os
 
 # Paths for the model files
-MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "ml_pipeline")
+def find_model_dir():
+    possible_dirs = [
+        os.getenv("MODEL_DIR"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "models"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "ml_pipeline"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "ml_pipeline"),
+        os.path.join(os.getcwd(), "backend", "models"),
+        os.path.join(os.getcwd(), "ml_pipeline"),
+    ]
+    for d in possible_dirs:
+        if d and os.path.exists(os.path.join(d, "knn_model.joblib")):
+            return d
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "ml_pipeline")
+
+MODEL_DIR = find_model_dir()
 MODEL_PATH = os.path.join(MODEL_DIR, "knn_model.joblib")
 SCALER_PATH = os.path.join(MODEL_DIR, "scaler.joblib")
 ENCODERS_PATH = os.path.join(MODEL_DIR, "label_encoders.joblib")
@@ -29,7 +43,7 @@ async def lifespan(app: FastAPI):
             label_encoders = joblib.load(ENCODERS_PATH)
             print(f"[OK] Models loaded successfully from {MODEL_DIR}")
         else:
-            print("[WARN] Model files not found. Run ml_pipeline/train_knn.py first.")
+            print(f"[WARN] Model files not found in {MODEL_DIR}. Checked {MODEL_PATH}")
     except Exception as e:
         print(f"[ERROR] Error loading models: {e}")
     yield
@@ -59,6 +73,17 @@ class LoanApplication(BaseModel):
     Loan_Amount_Term: float
     Credit_History: float
     Property_Area: str
+
+
+@app.get("/")
+def root():
+    return {
+        "status": "online",
+        "service": "Loan Approval Prediction API",
+        "models_loaded": knn_model is not None,
+        "docs": "/docs",
+        "health": "/health"
+    }
 
 
 @app.get("/health")
@@ -116,3 +141,9 @@ def predict_loan(application: LoanApplication):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

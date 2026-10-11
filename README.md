@@ -126,6 +126,39 @@ python ml_pipeline/train_knn.py
 
 ---
 
+---
+
+## 🌐 Production Deployment Guide
+
+Since this is a full-stack ML application, the frontend and backend can be deployed as follows:
+
+### 1. Deploy the Backend (FastAPI + ML Model) on [Render](https://render.com)
+1. Push your repository to GitHub.
+2. Sign in to Render and click **New +** -> **Web Service**.
+3. Select your repository (`Loan-Approval-Prediction-app`).
+4. Configure the service:
+   - **Name**: `loan-prediction-backend`
+   - **Language / Runtime**: `Python 3`
+   - **Root Directory**: `backend` (or leave blank if using root)
+   - **Build Command**: `pip install -r requirements.txt` (or `pip install -r backend/requirements.txt` if root)
+   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT` (or `uvicorn backend.main:app --host 0.0.0.0 --port $PORT` if root)
+5. Click **Deploy Web Service**.
+6. Once deployed, copy your backend URL (e.g., `https://loan-prediction-backend.onrender.com`).
+
+---
+
+### 2. Deploy the Frontend (Next.js) on [Vercel](https://vercel.com)
+1. Import your GitHub repository on Vercel.
+2. In the project configuration:
+   - **Root Directory**: Select `frontend`
+   - **Framework Preset**: `Next.js`
+3. Expand **Environment Variables** and add:
+   - **Key**: `NEXT_PUBLIC_API_URL`
+   - **Value**: Your Render backend URL (e.g. `https://loan-prediction-backend.onrender.com` without trailing slash)
+4. Click **Deploy**.
+
+---
+
 ## 🛠️ Technology Stack
 
 - **Machine Learning**: `scikit-learn`, `pandas`, `numpy`, `matplotlib`, `seaborn`, `joblib`
@@ -137,3 +170,4 @@ python ml_pipeline/train_knn.py
 
 ## 📜 License
 This project is open-source and available under the [MIT License](LICENSE).
+
