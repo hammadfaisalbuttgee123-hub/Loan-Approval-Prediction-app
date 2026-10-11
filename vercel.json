@@ -8,11 +8,6 @@
     "frontend": {
       "root": "frontend",
       "framework": "nextjs"
-    },
-    "ml_pipeline": {
-      "root": "ml_pipeline",
-      "runtime": "python",
-      "entrypoint": "main:app"
     }
   },
   "rewrites": [
