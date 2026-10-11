@@ -11,7 +11,8 @@
     },
     "ml_pipeline": {
       "root": "ml_pipeline",
-      "runtime": "python"
+      "runtime": "python",
+      "entrypoint": "main:app"
     }
   },
   "rewrites": [
